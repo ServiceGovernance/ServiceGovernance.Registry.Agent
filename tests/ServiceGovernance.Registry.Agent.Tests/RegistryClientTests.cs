@@ -10,6 +10,7 @@ using ServiceGovernance.Registry.Agent.Models;
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Testing.HttpClient;
 
@@ -118,7 +119,7 @@ namespace ServiceGovernance.Registry.Agent.Tests
                 await registerAction;
 
                 _httpClientTestingFactory.EnsureNoOutstandingRequests();
-                
+                Thread.Sleep(200);
 
                 var unregisterAction = Task.Run(() => _registryClient.UnregisterService());
                 _httpClientTestingFactory.Expect(HttpMethod.Delete, "http://registry.com/register/superRegisterToken").Respond(HttpStatusCode.OK);
