@@ -26,6 +26,7 @@ branches:
   only:
     - develop
     - master
+    - /feature/.*/
     - /release/.*/
     - /hotfix/.*/
 
