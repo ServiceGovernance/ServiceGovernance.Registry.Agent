@@ -54,7 +54,7 @@ namespace ServiceGovernance.Registry.Agent
                 var response = client.PostAsync("register", content).GetAwaiter().GetResult();
                 response.EnsureSuccessStatusCode();
 
-                _registerToken = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                SetRegisterToken(response.Content.ReadAsStringAsync().GetAwaiter().GetResult());
                 _logger.LogInformation($"Service registration in registry as '{registration.ServiceIdentifier}' ({registration.ServiceDisplayName}) was successfull. Registered service url(s): {GetServiceUrlsAsString(registration)}");
             }
             catch (Exception ex)
@@ -104,6 +104,15 @@ namespace ServiceGovernance.Registry.Agent
                     throw;
                 }
             }
+        }
+
+        /// <summary>
+        /// Sets the token, retrieved from the register method.
+        /// </summary>
+        /// <param name="registerToken"></param>
+        internal void SetRegisterToken(string registerToken)
+        {
+            _registerToken = registerToken;
         }
     }
 }
