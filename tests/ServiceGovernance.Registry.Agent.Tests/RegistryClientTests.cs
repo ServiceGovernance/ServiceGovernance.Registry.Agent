@@ -111,18 +111,20 @@ namespace ServiceGovernance.Registry.Agent.Tests
             [Test]
             public async Task Calls_Endpoint_With_Token_From_Register_Call()
             {
-                _options.ServiceDisplayName = "My Api";
-                _options.ServiceIdentifier = "api1";
+                _registryClient.SetRegisterToken("superRegisterToken");
 
-                var registerAction = Task.Run(() => _registryClient.RegisterService());
-                _httpClientTestingFactory.Expect(HttpMethod.Post, "http://registry.com/register").Respond(HttpStatusCode.OK, "superRegisterToken");
-                await registerAction;
-
-                // using new Task( Action) because on linux, the Task.run is to fast for non async methods
-                var unregisterAction = new Task(() => _registryClient.UnregisterService());
-                unregisterAction.Start();
+                var unregisterAction = Task.Run(() => _registryClient.UnregisterService());
                 _httpClientTestingFactory.Expect(HttpMethod.Delete, "http://registry.com/register/superRegisterToken").Respond(HttpStatusCode.OK);
                 await unregisterAction;
+            }
+
+            [Test]
+            public void Calls_No_Endpoint_When_No_Token_Is_Set()
+            {
+                _registryClient.SetRegisterToken("");
+
+                _registryClient.UnregisterService();
+                _httpClientTestingFactory.EnsureNoOutstandingRequests();
             }
         }
     }
