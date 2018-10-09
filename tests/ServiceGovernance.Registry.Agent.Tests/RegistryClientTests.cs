@@ -118,10 +118,9 @@ namespace ServiceGovernance.Registry.Agent.Tests
                 _httpClientTestingFactory.Expect(HttpMethod.Post, "http://registry.com/register").Respond(HttpStatusCode.OK, "superRegisterToken");
                 await registerAction;
 
-                _httpClientTestingFactory.EnsureNoOutstandingRequests();
-                Thread.Sleep(200);
-
-                var unregisterAction = Task.Run(() => _registryClient.UnregisterService());
+                // using new Task( Action) because on linux, the Task.run is to fast for non async methods
+                var unregisterAction = new Task(() => _registryClient.UnregisterService());
+                unregisterAction.Start();
                 _httpClientTestingFactory.Expect(HttpMethod.Delete, "http://registry.com/register/superRegisterToken").Respond(HttpStatusCode.OK);
                 await unregisterAction;
             }
