@@ -47,5 +47,3 @@ for:
   deploy:
   - provider: NuGet
     artifact: /NuGet/
-    api_key:
-      secure: pybRcci/MAriwLJ1paEYvUrK8vh61SG0T2bGwFA8k4ebYE/CaqoGRn9KsfvDd6zL
