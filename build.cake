@@ -5,7 +5,6 @@ var target = Argument("target", "Default");
 //////////////////////////////////////////////////////////////////////
 //    Build Variables
 /////////////////////////////////////////////////////////////////////
-var solution = "./ServiceGovernance.Registry.Agent.sln";
 var project = "./src/ServiceGovernance.Registry.Agent/ServiceGovernance.Registry.Agent.csproj";
 var outputDir = "./buildArtifacts/";
 var outputDirNuget = outputDir+"NuGet/";
