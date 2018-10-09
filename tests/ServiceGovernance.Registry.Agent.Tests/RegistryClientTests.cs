@@ -117,6 +117,9 @@ namespace ServiceGovernance.Registry.Agent.Tests
                 _httpClientTestingFactory.Expect(HttpMethod.Post, "http://registry.com/register").Respond(HttpStatusCode.OK, "superRegisterToken");
                 await registerAction;
 
+                _httpClientTestingFactory.EnsureNoOutstandingRequests();
+                
+
                 var unregisterAction = Task.Run(() => _registryClient.UnregisterService());
                 _httpClientTestingFactory.Expect(HttpMethod.Delete, "http://registry.com/register/superRegisterToken").Respond(HttpStatusCode.OK);
                 await unregisterAction;
