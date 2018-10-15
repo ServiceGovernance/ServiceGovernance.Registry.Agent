@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceGovernance.Registry.Agent;
 using System;
@@ -22,7 +21,7 @@ namespace Microsoft.AspNetCore.Builder
                 throw new ArgumentNullException(nameof(app));
 
             var lifetime = app.ApplicationServices.GetRequiredService<IApplicationLifetime>();
-            var client = app.ApplicationServices.GetRequiredService<IRegistryClient>();            
+            var client = app.ApplicationServices.GetRequiredService<IRegistryClient>();
 
             // register service when it's running
             lifetime.ApplicationStarted.Register(() => client.RegisterService());
