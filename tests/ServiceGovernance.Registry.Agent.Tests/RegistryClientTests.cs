@@ -64,7 +64,7 @@ namespace ServiceGovernance.Registry.Agent.Tests
                 var registration = JsonConvert.DeserializeObject<ServiceRegistration>(request.Request.Content.ReadAsStringAsync().Result);
                 registration.ServiceDisplayName.Should().Be(_options.ServiceDisplayName);
                 registration.ServiceIdentifier.Should().Be(_options.ServiceIdentifier);
-                registration.ServiceUrls.Should().Contain(new Uri("http://test.com"));
+                registration.Endpoints.Should().Contain(new Uri("http://test.com"));
 
                 request.Respond(HttpStatusCode.OK, "registerToken");
 
@@ -81,7 +81,7 @@ namespace ServiceGovernance.Registry.Agent.Tests
 
                 var request = _httpClientTestingFactory.Expect(HttpMethod.Post, "http://registry.com/register");
                 var registration = JsonConvert.DeserializeObject<ServiceRegistration>(request.Request.Content.ReadAsStringAsync().Result);
-                registration.ServiceUrls.Should().Contain(new Uri($"http://{Environment.MachineName}:5000"));
+                registration.Endpoints.Should().Contain(new Uri($"http://{Environment.MachineName}:5000"));
 
                 request.Respond(HttpStatusCode.OK, "registerToken");
 
@@ -98,7 +98,7 @@ namespace ServiceGovernance.Registry.Agent.Tests
 
                 var request = _httpClientTestingFactory.Expect(HttpMethod.Post, "http://registry.com/register");
                 var registration = JsonConvert.DeserializeObject<ServiceRegistration>(request.Request.Content.ReadAsStringAsync().Result);
-                registration.ServiceUrls.Should().Contain(new Uri($"http://test.com"));
+                registration.Endpoints.Should().Contain(new Uri($"http://test.com"));
 
                 request.Respond(HttpStatusCode.OK, "registerToken");
 
