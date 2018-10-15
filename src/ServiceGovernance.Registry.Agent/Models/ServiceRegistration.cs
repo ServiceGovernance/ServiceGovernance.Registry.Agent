@@ -17,6 +17,6 @@ namespace ServiceGovernance.Registry.Agent.Models
         /// <summary>
         /// Gets or sets the urls the service is available on
         /// </summary>
-        public Uri[] ServiceUrls { get; set; }
+        public Uri[] Endpoints { get; set; }
     }
 }

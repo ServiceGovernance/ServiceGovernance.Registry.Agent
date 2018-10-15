@@ -41,7 +41,7 @@ namespace ServiceGovernance.Registry.Agent
             {
                 ServiceIdentifier = _options.ServiceIdentifier,
                 ServiceDisplayName = _options.ServiceDisplayName,
-                ServiceUrls = _options.ServiceUrls ?? GetServiceUrls()
+                Endpoints = _options.ServiceUrls ?? GetServiceUrls()
             };
 
             _logger.LogDebug($"Try registering the service as '{registration.ServiceIdentifier}' ({registration.ServiceDisplayName}) in registry with service url(s) '{GetServiceUrlsAsString(registration)}'.");
@@ -66,7 +66,7 @@ namespace ServiceGovernance.Registry.Agent
 
         private string GetServiceUrlsAsString(ServiceRegistration registration)
         {
-            return String.Join(", ", registration.ServiceUrls.Select(u => u.ToString()));
+            return String.Join(", ", registration.Endpoints.Select(u => u.ToString()));
         }
 
         private Uri[] GetServiceUrls()
