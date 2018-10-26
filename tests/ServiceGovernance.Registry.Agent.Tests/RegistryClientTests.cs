@@ -60,7 +60,7 @@ namespace ServiceGovernance.Registry.Agent.Tests
                 _options.ServiceUrls = new[] { new Uri("http://test.com") };
                 var action = Task.Run(() => _registryClient.RegisterService());
 
-                var request = _httpClientTestingFactory.Expect(HttpMethod.Post, "http://registry.com/register");
+                var request = _httpClientTestingFactory.Expect(HttpMethod.Post, "http://registry.com/v1/register");
                 var registration = JsonConvert.DeserializeObject<ServiceRegistration>(request.Request.Content.ReadAsStringAsync().Result);
                 registration.ServiceDisplayName.Should().Be(_options.ServiceDisplayName);
                 registration.ServiceIdentifier.Should().Be(_options.ServiceIdentifier);
@@ -79,9 +79,10 @@ namespace ServiceGovernance.Registry.Agent.Tests
 
                 _serverAddressesFeature.Addresses.Add("http://*:5000");
 
-                var request = _httpClientTestingFactory.Expect(HttpMethod.Post, "http://registry.com/register");
+                var request = _httpClientTestingFactory.Expect(HttpMethod.Post, "http://registry.com/v1/register");
                 var registration = JsonConvert.DeserializeObject<ServiceRegistration>(request.Request.Content.ReadAsStringAsync().Result);
                 registration.Endpoints.Should().Contain(new Uri($"http://{Environment.MachineName}:5000"));
+                registration.MachineIpAddress.Should().NotBeNullOrWhiteSpace();
 
                 request.Respond(HttpStatusCode.OK, "registerToken");
 
@@ -96,7 +97,7 @@ namespace ServiceGovernance.Registry.Agent.Tests
 
                 _serverAddressesFeature.Addresses.Add("http://test.com");
 
-                var request = _httpClientTestingFactory.Expect(HttpMethod.Post, "http://registry.com/register");
+                var request = _httpClientTestingFactory.Expect(HttpMethod.Post, "http://registry.com/v1/register");
                 var registration = JsonConvert.DeserializeObject<ServiceRegistration>(request.Request.Content.ReadAsStringAsync().Result);
                 registration.Endpoints.Should().Contain(new Uri($"http://test.com"));
 
@@ -114,7 +115,7 @@ namespace ServiceGovernance.Registry.Agent.Tests
                 _registryClient.SetRegisterToken("superRegisterToken");
 
                 var unregisterAction = Task.Run(() => _registryClient.UnregisterService());
-                _httpClientTestingFactory.Expect(HttpMethod.Delete, "http://registry.com/register/superRegisterToken").Respond(HttpStatusCode.OK);
+                _httpClientTestingFactory.Expect(HttpMethod.Delete, "http://registry.com/v1/register/superRegisterToken").Respond(HttpStatusCode.OK);
                 await unregisterAction;
             }
 
