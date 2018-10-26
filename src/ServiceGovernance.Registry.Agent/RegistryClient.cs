@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Text;
 
 namespace ServiceGovernance.Registry.Agent
@@ -21,6 +22,7 @@ namespace ServiceGovernance.Registry.Agent
         private string _registerToken;
 
         internal const string HTTPCLIENT_NAME = "ServiceRegistryHttpClient";
+        private const string REGISTER_URL = "/v1/register";
         private readonly ILogger<RegistryClient> _logger;
         private readonly IServer _server;
 
@@ -41,7 +43,8 @@ namespace ServiceGovernance.Registry.Agent
             {
                 ServiceIdentifier = _options.ServiceIdentifier,
                 ServiceDisplayName = _options.ServiceDisplayName,
-                Endpoints = _options.ServiceUrls ?? GetServiceUrls()
+                Endpoints = _options.ServiceUrls ?? GetServiceUrls(),
+                MachineIpAddress = GetIpAddress()
             };
 
             _logger.LogDebug($"Try registering the service as '{registration.ServiceIdentifier}' ({registration.ServiceDisplayName}) in registry with service url(s) '{GetServiceUrlsAsString(registration)}'.");
@@ -51,7 +54,7 @@ namespace ServiceGovernance.Registry.Agent
 
             try
             {
-                var response = client.PostAsync("register", content).GetAwaiter().GetResult();
+                var response = client.PostAsync(REGISTER_URL, content).GetAwaiter().GetResult();
                 response.EnsureSuccessStatusCode();
 
                 SetRegisterToken(response.Content.ReadAsStringAsync().GetAwaiter().GetResult());
@@ -62,6 +65,17 @@ namespace ServiceGovernance.Registry.Agent
                 _logger.LogCritical($"Service registration in registry failed: {ex.Message}");
                 throw;
             }
+        }
+
+        private string GetIpAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            var address = host.AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+
+            if (address != null)
+                return address.ToString();
+
+            return string.Empty;
         }
 
         private string GetServiceUrlsAsString(ServiceRegistration registration)
@@ -94,7 +108,7 @@ namespace ServiceGovernance.Registry.Agent
                 var client = _httpClientFactory.CreateClient(HTTPCLIENT_NAME);
                 try
                 {
-                    var response = client.DeleteAsync($"register/{_registerToken}").GetAwaiter().GetResult();
+                    var response = client.DeleteAsync(REGISTER_URL + $"/{_registerToken}").GetAwaiter().GetResult();
                     response.EnsureSuccessStatusCode();
                     _logger.LogInformation($"Service deregistration was successfull.");
                 }
