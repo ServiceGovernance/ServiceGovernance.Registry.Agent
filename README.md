@@ -18,6 +18,7 @@ public void ConfigureServices(IServiceCollection services)
             options.Registry = new Uri("https://myserviceregistry.mycompany.com");
             options.ServiceIdentifier = "Api1";
             options.ServiceDisplayName = "My Api";
+            options.PublicUrls = new[]{new Uri("https://api1.mycompany.com")}
             });
 }
 
@@ -47,11 +48,12 @@ public void ConfigureServices(IServiceCollection services)
     "ServiceRegistry": {
         "Registry": "https://myserviceregistry.mycompany.com",
         "ServiceIdentifier": "Api1",
-        "ServiceDisplayName": "My Api"
+        "ServiceDisplayName": "My Api",
+        "PublicUrls": ["https://api1.mycompany.com"]
     }
 }
 ```
 
 ### Service urls
 
-The url, the service is available on and which will be registered in the ServiceRegistry, will be detected automatically. You can manually provide the service urls via the `ServiceUrls` property (or configuration key).
+The url, the service is available on and which will be registered in the ServiceRegistry, will be detected automatically. You can manually provide the service urls via the `ServiceEndpoints` property (or configuration key).

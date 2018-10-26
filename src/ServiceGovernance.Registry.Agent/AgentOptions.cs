@@ -25,7 +25,12 @@ namespace ServiceGovernance.Registry.Agent
         /// <summary>
         /// Gets or sets the urls the service is available on
         /// </summary>
-        public Uri[] ServiceUrls { get; set; }
+        public Uri[] ServiceEndpoints { get; set; }
+
+        /// <summary>
+        /// Gets or sets the urls which should be used from service consumers (e.g. the public loadbalanced url)
+        /// </summary>
+        public Uri[] PublicUrls { get; set; }
 
         /// <summary>
         /// Validate the option's values

@@ -41,13 +41,14 @@ namespace ServiceGovernance.Registry.Agent
         {
             var registration = new ServiceRegistration
             {
-                ServiceIdentifier = _options.ServiceIdentifier,
-                ServiceDisplayName = _options.ServiceDisplayName,
-                Endpoints = _options.ServiceUrls ?? GetServiceUrls(),
-                MachineIpAddress = GetIpAddress()
+                ServiceId = _options.ServiceIdentifier,
+                DisplayName = _options.ServiceDisplayName,
+                Endpoints = _options.ServiceEndpoints ?? GetServiceUrls(),
+                PublicUrls = _options.PublicUrls,
+                IpAddress = GetIpAddress()
             };
 
-            _logger.LogDebug($"Try registering the service as '{registration.ServiceIdentifier}' ({registration.ServiceDisplayName}) in registry with service url(s) '{GetServiceUrlsAsString(registration)}'.");
+            _logger.LogDebug($"Try registering the service as '{registration.ServiceId}' ({registration.DisplayName}) in registry with service url(s) '{GetServiceUrlsAsString(registration)}'.");
 
             var content = new StringContent(JsonConvert.SerializeObject(registration), Encoding.UTF8);
             var client = _httpClientFactory.CreateClient(HTTPCLIENT_NAME);
@@ -58,7 +59,7 @@ namespace ServiceGovernance.Registry.Agent
                 response.EnsureSuccessStatusCode();
 
                 SetRegisterToken(response.Content.ReadAsStringAsync().GetAwaiter().GetResult());
-                _logger.LogInformation($"Service registration in registry as '{registration.ServiceIdentifier}' ({registration.ServiceDisplayName}) was successfull. Registered service url(s): {GetServiceUrlsAsString(registration)}");
+                _logger.LogInformation($"Service registration in registry as '{registration.ServiceId}' ({registration.DisplayName}) was successfull. Registered service url(s): {GetServiceUrlsAsString(registration)}");
             }
             catch (Exception ex)
             {
