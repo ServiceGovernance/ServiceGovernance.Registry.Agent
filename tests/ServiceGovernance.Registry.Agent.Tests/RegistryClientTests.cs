@@ -57,14 +57,17 @@ namespace ServiceGovernance.Registry.Agent.Tests
             {
                 _options.ServiceDisplayName = "My Api";
                 _options.ServiceIdentifier = "api1";
-                _options.ServiceUrls = new[] { new Uri("http://test.com") };
+                _options.ServiceEndpoints = new[] { new Uri("http://myservice01.test.com") };
+                _options.PublicUrls = new[] { new Uri("http://service.test.com") };
+
                 var action = Task.Run(() => _registryClient.RegisterService());
 
                 var request = _httpClientTestingFactory.Expect(HttpMethod.Post, "http://registry.com/v1/register");
                 var registration = JsonConvert.DeserializeObject<ServiceRegistration>(request.Request.Content.ReadAsStringAsync().Result);
-                registration.ServiceDisplayName.Should().Be(_options.ServiceDisplayName);
-                registration.ServiceIdentifier.Should().Be(_options.ServiceIdentifier);
-                registration.Endpoints.Should().Contain(new Uri("http://test.com"));
+                registration.DisplayName.Should().Be(_options.ServiceDisplayName);
+                registration.ServiceId.Should().Be(_options.ServiceIdentifier);
+                registration.Endpoints.Should().Contain(new Uri("http://myservice01.test.com"));
+                registration.PublicUrls.Should().Contain(new Uri("http://service.test.com"));
 
                 request.Respond(HttpStatusCode.OK, "registerToken");
 
@@ -82,7 +85,7 @@ namespace ServiceGovernance.Registry.Agent.Tests
                 var request = _httpClientTestingFactory.Expect(HttpMethod.Post, "http://registry.com/v1/register");
                 var registration = JsonConvert.DeserializeObject<ServiceRegistration>(request.Request.Content.ReadAsStringAsync().Result);
                 registration.Endpoints.Should().Contain(new Uri($"http://{Environment.MachineName}:5000"));
-                registration.MachineIpAddress.Should().NotBeNullOrWhiteSpace();
+                registration.IpAddress.Should().NotBeNullOrWhiteSpace();
 
                 request.Respond(HttpStatusCode.OK, "registerToken");
 
